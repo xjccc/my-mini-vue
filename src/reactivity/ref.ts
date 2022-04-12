@@ -54,3 +54,21 @@ export function unRef (ref) {
   // 是ref对象 -> .value
   return isRef(ref) ? ref.value : ref
 }
+
+export function proxyRefs (objectWithRefs) {
+  // get set
+  return new Proxy(objectWithRefs, {
+    get (target, key) {
+      // get -> 返回.value
+      // not ref -> value
+      return unRef(Reflect.get(target, key))
+    },
+    set (target, key, value) {
+      if (isRef(target[key]) && !isRef(value)) {
+        return (target[key].value = value)
+      } else {
+        return Reflect.set(target, key, value)
+      }
+    }
+  })
+}
