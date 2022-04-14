@@ -2,7 +2,7 @@ import { extend } from '../shared'
 
 let activeEffect
 let shouldTrack
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any
   deps = []
   // 用户调用stop清空的状态，防止多次调用
