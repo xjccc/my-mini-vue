@@ -10,7 +10,7 @@ describe('computed', () => {
 
   it('should be lazy', () => {
     const value = reactive({ age: 1 })
-    const getter = jest.fn(() => {
+    const getter = vi.fn(() => {
       return value.age
     })
     const cValue = computed(getter)
@@ -39,7 +39,7 @@ describe('computed', () => {
 
   it('computed function ', () => {
     const value = reactive({ age: 1 })
-    const getter = jest.fn(() => {
+    const getter = vi.fn(() => {
       return val => value.age * val
     })
     const cValue = computed(getter)

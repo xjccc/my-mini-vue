@@ -14,7 +14,7 @@ describe('readonly', () => {
   })
 
   it('warn to be set', () => {
-    console.warn = jest.fn()
+    console.warn = vi.fn()
     const obj = readonly({
       age: 10
     })
