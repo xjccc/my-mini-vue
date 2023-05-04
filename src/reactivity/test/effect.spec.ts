@@ -1,5 +1,5 @@
 import { reactive } from '../reactive'
-import { effect } from '../effect'
+import { effect, stop } from '../effect'
 describe('effect', () => {
   it('happy path', () => {
     const user = reactive({ age: 10, name: 2 })
@@ -45,4 +45,32 @@ describe('effect', () => {
     expect(dummy).toBe(2)
   })
 
+  it('stop', () => {
+    let dummy
+    const obj = reactive({prop: 1})
+    const runner = effect(() => {
+      dummy = obj.prop
+    })
+    obj.prop = 2
+    expect(dummy).toBe(2)
+    stop(runner)
+    obj.prop = 3
+    expect(dummy).toBe(2)
+    runner()
+    expect(dummy).toBe(3)
+  })
+  it('onStop', () => {
+    const obj = reactive({
+      foo: 1
+    })
+    const onStop = vi.fn()
+    let dummy
+    const runner = effect(() => {
+      dummy = obj.foo
+    },{
+      onStop
+    })
+    stop(runner)
+    expect(onStop).toBeCalledTimes(1)
+  })
 })
