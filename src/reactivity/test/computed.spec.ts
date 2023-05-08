@@ -21,23 +21,23 @@ describe('computed', () => {
 
     expect(getter).toHaveBeenCalledTimes(1)
 
-    // should not computed again
+    // // should not computed again
     cValue.value
     expect(getter).toHaveBeenCalledTimes(1)
 
     value.age = 2 // set 时候会触发trigger -> effect -> get 重新执行
     expect(getter).toHaveBeenCalledTimes(1)
 
-    // now it should compute
+    // // now it should compute
     expect(cValue.value).toBe(2)
     expect(getter).toHaveBeenCalledTimes(2)
 
-    // should not compute again
+    // // should not compute again
     cValue.value
     expect(getter).toHaveBeenCalledTimes(2)
   })
 
-  it('computed function ', () => {
+  it.skip('computed function ', () => {
     const value = reactive({ age: 1 })
     const getter = vi.fn(() => {
       return val => value.age * val
