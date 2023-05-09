@@ -37,7 +37,7 @@ describe('computed', () => {
     expect(getter).toHaveBeenCalledTimes(2)
   })
 
-  it.skip('computed function ', () => {
+  it('computed function ', () => {
     const value = reactive({ age: 1 })
     const getter = vi.fn(() => {
       return val => value.age * val
