@@ -8,6 +8,10 @@ export function render (vnode, container) {
 function patch(vnode, container) {
   // 处理组件
   // 判断是不是element类型
+  // 是element应该处理element
+  // 如何区分是element、还是component？
+  // processElement()
+  // 组件就应该处理组件类型
   processComponent(vnode, container)
 }
 
