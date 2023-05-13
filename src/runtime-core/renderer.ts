@@ -11,7 +11,6 @@ function patch (vnode, container) {
   // 判断是不是element类型
   // 是element应该处理element
   // 如何区分是element、还是component？
-  console.log(vnode.type)
   if (typeof vnode.type === 'string') {
     processElement(vnode, container)
   } else if (isObject(vnode.type)) {
@@ -27,7 +26,7 @@ function processElement(vnode: any, container: any) {
 }
 
 function mountElement (vnode, container) {
-  const el = document.createElement(vnode.type)
+  const el = (vnode.el = document.createElement(vnode.type))
   // string \ array 类型的vnode.children
   const { props, children } = vnode
   if (typeof children === 'string') {
@@ -51,18 +50,22 @@ function processComponent (vnode, container) {
   mountComponent(vnode, container)
 }
 
-function mountComponent (vnode, container) {
-  const instance = createComponentInstance(vnode)
+function mountComponent (initialVNode, container) {
+  const instance = createComponentInstance(initialVNode)
   setupComponent(instance)
-  setupRenderEffect(instance, container)
+  setupRenderEffect(instance, initialVNode, container)
 }
 
-function setupRenderEffect (instance: any, container) {
-  const subTree = instance.render()
+function setupRenderEffect (instance: any, initialVNode, container) {
+  const {proxy} = instance
+  const subTree = instance.render.call(proxy)
   // vnode -> patch
   // vnode -> element -> mountElement
 
   patch(subTree, container)
+
+  // 所有element mounted 之后，进行el
+  initialVNode.el = subTree.el
 }
 
 
