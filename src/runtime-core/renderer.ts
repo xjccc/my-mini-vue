@@ -14,7 +14,7 @@ function patch (vnode, container) {
   // 如何区分是element、还是component？
   // ShapeFlags
   // vnode -> flag
-  const {shapeFlag} = vnode
+  const { shapeFlag } = vnode
   if (shapeFlag & ShapeFlags.ELEMENT) {
     processElement(vnode, container)
   } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
@@ -23,7 +23,7 @@ function patch (vnode, container) {
   }
 }
 
-function processElement(vnode: any, container: any) {
+function processElement (vnode: any, container: any) {
   // 初始化
   mountElement(vnode, container)
   // 更新
@@ -32,16 +32,25 @@ function processElement(vnode: any, container: any) {
 function mountElement (vnode, container) {
   const el = (vnode.el = document.createElement(vnode.type))
   // string \ array 类型的vnode.children
-  const { props, children, shapeFlag } = vnode
+  const { children, shapeFlag } = vnode
   if (shapeFlag & ShapeFlags.ELEMENT) {
     el.textContent = children
   } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
     mountChildren(vnode, el)
   }
   // props -> attribute
+  const { props } = vnode
   for (const key in props) {
     const val = props[key]
-    el.setAttribute(key, val)
+    // 具体click逻辑 -> 通用
+    // on + event name
+    const isOn = (key: string) => /^on[A-Z]/.test(key)
+    if (isOn(key)) {
+      const event = key.slice(2).toLowerCase()
+      el.addEventListener(event, val)
+    } else {
+      el.setAttribute(key, val)
+    }
   }
   container.append(el)
 }
@@ -61,7 +70,7 @@ function mountComponent (initialVNode, container) {
 }
 
 function setupRenderEffect (instance: any, initialVNode, container) {
-  const {proxy} = instance
+  const { proxy } = instance
   const subTree = instance.render.call(proxy)
   // vnode -> patch
   // vnode -> element -> mountElement
@@ -71,5 +80,3 @@ function setupRenderEffect (instance: any, initialVNode, container) {
   // 所有element mounted 之后，进行el
   initialVNode.el = subTree.el
 }
-
-
