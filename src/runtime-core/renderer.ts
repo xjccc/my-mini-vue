@@ -33,10 +33,10 @@ function mountElement (vnode, container) {
   const el = (vnode.el = document.createElement(vnode.type))
   // string \ array 类型的vnode.children
   const { children, shapeFlag } = vnode
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    el.textContent = children
-  } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+  if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
     mountChildren(vnode, el)
+  } else if (shapeFlag & ShapeFlags.ELEMENT) {
+    el.textContent = children
   }
   // props -> attribute
   const { props } = vnode
