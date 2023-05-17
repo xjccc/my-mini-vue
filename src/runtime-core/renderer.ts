@@ -1,5 +1,4 @@
 import { ShapeFlags } from '../shared/ShapeFlags'
-import { isObject } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
 
 export function render (vnode, container) {
@@ -80,3 +79,5 @@ function setupRenderEffect (instance: any, initialVNode, container) {
   // 所有element mounted 之后，进行el
   initialVNode.el = subTree.el
 }
+'测试一下'
+
