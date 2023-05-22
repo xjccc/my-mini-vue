@@ -1,5 +1,6 @@
 import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './component'
+import { Fragment, Text } from './vnode'
 
 export function render (vnode, container) {
   // 调用patch方法
@@ -13,14 +14,35 @@ function patch (vnode, container) {
   // 如何区分是element、还是component？
   // ShapeFlags
   // vnode -> flag
-  const { shapeFlag } = vnode
-  
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    processElement(vnode, container)
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    // 组件就应该处理组件类型
-    processComponent(vnode, container)
+  const { type, shapeFlag } = vnode
+
+  // Fragment -> 只渲染children
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container)
+      break
+    case Text:
+      processText(vnode, container)
+      break
+
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) {
+        processElement(vnode, container)
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        // 组件就应该处理组件类型
+        processComponent(vnode, container)
+      }
   }
+}
+
+function processFragment (vnode, container) {
+  mountChildren(vnode, container)
+}
+
+function processText (vnode, container) {
+  const { children } = vnode
+  const textNode = (vnode.el = document.createTextNode(children))
+  container.append(textNode)
 }
 
 function processElement (vnode: any, container: any) {
