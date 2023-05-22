@@ -6,7 +6,6 @@ export const Foo = {
   },
   render () {
     const foo = h('p', {}, 'foo')
-    console.log(this.$slots)
     // Foo组件的vnode.children
     // children 是vnode 不能是数组
     // renderSlots

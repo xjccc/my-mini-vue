@@ -14,6 +14,7 @@ function patch (vnode, container) {
   // ShapeFlags
   // vnode -> flag
   const { shapeFlag } = vnode
+  
   if (shapeFlag & ShapeFlags.ELEMENT) {
     processElement(vnode, container)
   } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
@@ -79,5 +80,3 @@ function setupRenderEffect (instance: any, initialVNode, container) {
   // 所有element mounted 之后，进行el
   initialVNode.el = subTree.el
 }
-'测试一下'
-
