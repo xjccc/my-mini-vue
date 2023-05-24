@@ -4,7 +4,11 @@ import { createAppApi } from './createApp'
 import { Fragment, Text } from './vnode'
 
 export function createRenderer (options) {
-  const { createElement, patchProp, insert } = options
+  const {
+    createElement: hostCreateElement,
+    patchProp: hostPatchProp,
+    insert: hostInsert
+  } = options
   function render (vnode, container) {
     // 调用patch方法
     patch(vnode, container, null)
