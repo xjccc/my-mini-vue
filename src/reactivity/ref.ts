@@ -18,11 +18,12 @@ class RefImpl {
   }
   set value (newValue) {
     // reactive对象，就会是proxy
-    if (!hasChanged(newValue, this._rawValue)) return
-    this._rawValue = newValue
-    this._value = convert(newValue)
-
-    triggerEffects(this.dep)
+    if (hasChanged(newValue, this._rawValue)){
+      this._rawValue = newValue
+      this._value = convert(newValue)
+      
+      triggerEffects(this.dep)
+    }
   }
 }
 
