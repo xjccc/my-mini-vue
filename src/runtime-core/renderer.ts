@@ -1,4 +1,5 @@
 import { effect } from '../reactivity/effect'
+import { EMPTY_OBJECT } from '../shared'
 import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './component'
 import { createAppApi } from './createApp'
@@ -65,8 +66,34 @@ export function createRenderer (options) {
   function patchElement (n1, n2, container) {
     console.log(n1, n2)
     // props
+    const oldProps = n1.props || EMPTY_OBJECT
+    const newProps = n2.props || EMPTY_OBJECT
+    const el = (n2.el = n1.el)
+    patchProps(el, oldProps, newProps)
     // children
   }
+
+  function patchProps (el, oldProps, newProps) {
+    if (oldProps !== newProps) {
+      for (const key in newProps) {
+        if (Object.prototype.hasOwnProperty.call(newProps, key)) {
+          const prevProp = oldProps[key]
+          const nextProp = newProps[key]
+          if (prevProp !== nextProp) {
+            hostPatchProp(el, key, prevProp, nextProp)
+          }
+        }
+      }
+      if (oldProps !== EMPTY_OBJECT) {
+        for (const key in oldProps) {
+          if (!(key in newProps)) {
+            hostPatchProp(el, key, oldProps[key], null)
+          }
+        }
+      }
+    }
+  }
+
   function mountElement (vnode, container, parentComponent) {
     // canvase
     // new Element()
@@ -91,7 +118,7 @@ export function createRenderer (options) {
       // } else {
       //   el.setAttribute(key, val)
       // }
-      hostPatchProp(el, key, val)
+      hostPatchProp(el, key, null, val)
     }
     // canvas
     // el.x = 10
