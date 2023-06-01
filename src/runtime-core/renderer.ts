@@ -5,7 +5,7 @@ import { createComponentInstance, setupComponent } from './component'
 import { createAppApi } from './createApp'
 import { Fragment, Text } from './vnode'
 
-export function createRenderer(options) {
+export function createRenderer (options) {
   const {
     createElement: hostCreateElement,
     patchProp: hostPatchProp,
@@ -13,12 +13,12 @@ export function createRenderer(options) {
     remove: hostRemove,
     setElementText: hostSetElementText
   } = options
-  function render(vnode, container) {
+  function render (vnode, container) {
     // 调用patch方法
     patch(null, vnode, container, null, null)
   }
 
-  function patch(n1, n2, container, parentComponent, anchor) {
+  function patch (n1, n2, container, parentComponent, anchor) {
     // 处理组件
     // 判断是不是element类型
     // 是element应该处理element
@@ -46,17 +46,23 @@ export function createRenderer(options) {
     }
   }
 
-  function processFragment(n1, n2, container, parentComponent, anchor) {
+  function processFragment (n1, n2, container, parentComponent, anchor) {
     mountChildren(n2.children, container, parentComponent, anchor)
   }
 
-  function processText(n1, n2, container) {
+  function processText (n1, n2, container) {
     const { children } = n2
     const textNode = (n2.el = document.createTextNode(children))
     container.append(textNode)
   }
 
-  function processElement(n1, n2: any, container: any, parentComponent, anchor) {
+  function processElement (
+    n1,
+    n2: any,
+    container: any,
+    parentComponent,
+    anchor
+  ) {
     if (!n1) {
       // 初始化
       mountElement(n2, container, parentComponent, anchor)
@@ -65,7 +71,7 @@ export function createRenderer(options) {
       patchElement(n1, n2, container, parentComponent, anchor)
     }
   }
-  function patchElement(n1, n2, container, parentComponent, anchor) {
+  function patchElement (n1, n2, container, parentComponent, anchor) {
     console.log(n1, n2)
     // props
     const oldProps = n1.props || EMPTY_OBJECT
@@ -76,7 +82,7 @@ export function createRenderer(options) {
     // children
   }
 
-  function patchChildren(n1, n2, container, parentComponent, anchor) {
+  function patchChildren (n1, n2, container, parentComponent, anchor) {
     const prevShapeFlag = n1.shapeFlag
     const shapeFlag = n2.shapeFlag
     const c1 = n1.children
@@ -93,7 +99,7 @@ export function createRenderer(options) {
     } else {
       // new array
       if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
-        hostSetElementText(container, "")
+        hostSetElementText(container, '')
         mountChildren(c2, container, parentComponent, anchor)
       } else {
         // array diff array
@@ -102,12 +108,18 @@ export function createRenderer(options) {
     }
   }
 
-  function patchKeyedChildren(c1, c2, container, parentComponent, parentAnchor) {
+  function patchKeyedChildren (
+    c1,
+    c2,
+    container,
+    parentComponent,
+    parentAnchor
+  ) {
     let i = 0
     const l2 = c2.length
     let e1 = c1.length - 1
     let e2 = l2 - 1
-    function isSomeVNodeType(n1, n2) {
+    function isSomeVNodeType (n1, n2) {
       // type 一致
       // key
       return n1.type === n2.type && n1.key === n2.key
@@ -140,29 +152,63 @@ export function createRenderer(options) {
       if (i <= e2) {
         const nextPos = e2 + 1
         const anchor = nextPos < l2 ? c2[nextPos].el : null
-        while(i <= e2) {
+        while (i <= e2) {
           patch(null, c2[i], container, parentComponent, anchor)
           i++
         }
       }
     } else if (i > e2) {
-      while(i <= e1) {
+      while (i <= e1) {
         hostRemove(c1[i].el)
         i++
       }
     } else {
       // 乱序 - 中间对比
+      let s1 = i
+      let s2 = i
+      const toBePatched = e2 - s2 + 1
+      let patched = 0
+      const keyToNewIndexMap = new Map()
+      for (let i = s2; i <= e2; i++) {
+        const nextChild = c2[i]
+        keyToNewIndexMap.set(nextChild.key, i)
+      }
+      for (let i = s1; i <= e1; i++) {
+        const prevChild = c1[i]
+        if (patched >= toBePatched) {
+          hostRemove(prevChild.el)
+          continue
+        }
+        // null 和 undefined
+        let newIndex
+        if (prevChild.key != null) {
+          newIndex = keyToNewIndexMap.get(prevChild.key)
+        } else {
+          for (let j = s2; j < e2; j++) {
+            if (isSomeVNodeType(prevChild, c2[j])) {
+              newIndex = j
+              break
+            }
+          }
+        }
+        if (newIndex === undefined) {
+          hostRemove(prevChild.el)
+        } else {
+          patch(prevChild, c2[newIndex], container, parentComponent, null)
+          patched++
+        }
+      }
     }
   }
 
-  function unmountChildren(children) {
+  function unmountChildren (children) {
     for (let i = 0; i < children.length; i++) {
       const el = children[i].el
       hostRemove(el)
     }
   }
 
-  function patchProps(el, oldProps, newProps) {
+  function patchProps (el, oldProps, newProps) {
     if (oldProps !== newProps) {
       for (const key in newProps) {
         if (Object.prototype.hasOwnProperty.call(newProps, key)) {
@@ -183,7 +229,7 @@ export function createRenderer(options) {
     }
   }
 
-  function mountElement(vnode, container, parentComponent, anchor) {
+  function mountElement (vnode, container, parentComponent, anchor) {
     // canvase
     // new Element()
     const el = (vnode.el = hostCreateElement(vnode.type))
@@ -217,21 +263,21 @@ export function createRenderer(options) {
     hostInsert(el, container, anchor)
   }
 
-  function mountChildren(children, container, parentComponent, anchor) {
+  function mountChildren (children, container, parentComponent, anchor) {
     children.forEach(v => patch(null, v, container, parentComponent, anchor))
   }
 
-  function processComponent(n1, n2, container, parentComponent, anchor) {
+  function processComponent (n1, n2, container, parentComponent, anchor) {
     mountComponent(n2, container, parentComponent, anchor)
   }
 
-  function mountComponent(initialVNode, container, parentComponent, anchor) {
+  function mountComponent (initialVNode, container, parentComponent, anchor) {
     const instance = createComponentInstance(initialVNode, parentComponent)
     setupComponent(instance)
     setupRenderEffect(instance, initialVNode, container, anchor)
   }
 
-  function setupRenderEffect(instance: any, initialVNode, container, anchor) {
+  function setupRenderEffect (instance: any, initialVNode, container, anchor) {
     effect(() => {
       if (!instance.isMounted) {
         const { proxy } = instance
