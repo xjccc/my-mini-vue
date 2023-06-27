@@ -1,27 +1,72 @@
 lockfileVersion: '6.0'
 
-devDependencies:
-  '@babel/core':
-    specifier: ^7.17.5
-    version: 7.17.5
-  '@babel/preset-env':
-    specifier: ^7.16.11
-    version: 7.16.11(@babel/core@7.17.5)
-  '@babel/preset-typescript':
-    specifier: ^7.16.7
-    version: 7.16.7(@babel/core@7.17.5)
-  '@rollup/plugin-typescript':
-    specifier: ^11.1.0
-    version: 11.1.0(rollup@3.21.6)(tslib@2.5.0)(typescript@5.0.4)
-  rollup:
-    specifier: ^3.21.6
-    version: 3.21.6
-  tslib:
-    specifier: ^2.5.0
-    version: 2.5.0
-  vitest:
-    specifier: ^0.30.1
-    version: 0.30.1
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    devDependencies:
+      '@babel/core':
+        specifier: ^7.17.5
+        version: 7.17.5
+      '@babel/preset-env':
+        specifier: ^7.16.11
+        version: 7.16.11(@babel/core@7.17.5)
+      '@babel/preset-typescript':
+        specifier: ^7.16.7
+        version: 7.16.7(@babel/core@7.17.5)
+      '@rollup/plugin-typescript':
+        specifier: ^11.1.0
+        version: 11.1.0(rollup@3.21.6)(tslib@2.5.0)(typescript@5.0.4)
+      rollup:
+        specifier: ^3.21.6
+        version: 3.21.6
+      tslib:
+        specifier: ^2.5.0
+        version: 2.5.0
+      vitest:
+        specifier: ^0.30.1
+        version: 0.30.1
+
+  packages/compiler-core:
+    dependencies:
+      '@guide-mini-vue/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  packages/reactivity:
+    dependencies:
+      '@guide-mini-vue/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  packages/runtime-core:
+    dependencies:
+      '@guide-mini-vue/reactivity':
+        specifier: workspace:^
+        version: link:../reactivity
+      '@guide-mini-vue/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  packages/runtime-dom:
+    dependencies:
+      '@guide-mini-vue/runtime-core':
+        specifier: workspace:^
+        version: link:../runtime-core
+
+  packages/shared: {}
+
+  packages/vue:
+    dependencies:
+      '@guide-mini-vue/compiler-core':
+        specifier: workspace:^
+        version: link:../compiler-core
+      '@guide-mini-vue/runtime-dom':
+        specifier: workspace:^
+        version: link:../runtime-dom
 
 packages:
 
